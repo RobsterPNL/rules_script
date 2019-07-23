@@ -2,15 +2,23 @@
 
 declare(strict_types = 1);
 
+/**
+ * @param string $rule
+ * 
+ * @return boolean
+ */
 function checkRule(string $rule): bool 
 {
     $items = [2, 177];
 
-    return eval(preg_replace_callback("/\d+/", function($matches) use ($items) {
+    return eval(preg_replace_callback("/\d+/", static function($matches) use ($items) {
         return var_export(in_array($matches[0], $items), true);
     }, sprintf('%s %s%s', 'return', $rule, ';')));
 }
 
+/**
+ * @author Robert Matuszewski <robmatu@gmail.com>
+ */
 final class RuleCheckerTest extends PHPUnit\Framework\TestCase
 {
     /**
@@ -42,13 +50,9 @@ final class RuleCheckerTest extends PHPUnit\Framework\TestCase
     /**
      * @dataProvider appJobsRulesProvider
      */
-    public function testCheckItemsForTestAppJobsRules(string $rule, bool $result): void
+    public function testCheckItemsForAppJobsTestRules(string $rule, bool $result): void
     {
-        if ($result) {
-            $this->assertTrue(checkRule($rule));
-        } else {
-            $this->assertFalse(checkRule($rule));
-        }
+        $this->assertEquals($result, checkRule($rule));
     }
 
     /**
